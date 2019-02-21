@@ -32,7 +32,7 @@ def train_kitti():
     cfg.base_net_weights = os.path.join('./model/', nn.get_weight_path())
 
     # TODO: the only file should to be change for other data to train
-    cfg.model_path = './model/kitti_frcnn_last.hdf5'
+    cfg.model_path = './model/ship_detection_last.hdf5'
     cfg.simple_label_file = 'kitti_simple_label.txt'
 
     all_images, classes_count, class_mapping = get_data(cfg.simple_label_file)
@@ -178,10 +178,14 @@ def train_kitti():
                         selected_pos_samples = pos_samples.tolist()
                     else:
                         selected_pos_samples = np.random.choice(pos_samples, cfg.num_rois // 2, replace=False).tolist()
-                    try:
+                    
+                    if len(neg_samples) == 0:
+                        continue
+
+                    if len(neg_samples) >= cfg.num_rois - len(selected_pos_samples):
                         selected_neg_samples = np.random.choice(neg_samples, cfg.num_rois - len(selected_pos_samples),
                                                                 replace=False).tolist()
-                    except:
+                    else:
                         selected_neg_samples = np.random.choice(neg_samples, cfg.num_rois - len(selected_pos_samples),
                                                                 replace=True).tolist()
 
